@@ -15,11 +15,11 @@
 
 _此处截图仅做示例，实际上插件不会在同一天对同一位玩家显示不同的运势结果，除非配置文件被修改_
 
-![img](readme/Screenshot_20230114-032446.png)  
-![img](readme/Screenshot_20230114-014423.png)  
-![img](readme/Screenshot_20230114-032538.png)  
-![img](readme/Screenshot_20230114-032605.png)  
-![img](readme/Screenshot_20230114-032627.png)
+![img](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/DailyFortune/Screenshot_20230114-032446.png)  
+![img](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/DailyFortune/Screenshot_20230114-014423.png)  
+![img](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/DailyFortune/Screenshot_20230114-032538.png)  
+![img](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/DailyFortune/Screenshot_20230114-032605.png)  
+![img](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/DailyFortune/Screenshot_20230114-032627.png)
 
 ## 安装
 
