@@ -1,5 +1,5 @@
 // LiteLoaderScript Dev Helper
-/// <reference path="d:\Coding\LLSEAids/dts/llaids/src/index.d.ts"/>
+/// <reference path="../HelperLib/src/index.d.ts"/>
 /* global ll mc NBT File PermType ParamType */
 
 // TypeScript 写上头了，所以塞了一堆类型注解
