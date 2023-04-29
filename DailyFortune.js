@@ -5,7 +5,7 @@
 // TypeScript 写上头了，所以塞了一堆类型注解
 
 const PLUGIN_NAME = 'DailyFortune';
-const PLUGIN_VERSION = [0, 1, 0];
+const PLUGIN_VERSION = [0, 1, 1];
 
 const PLUGIN_DATA_PATH = `plugins/${PLUGIN_NAME}`;
 const PLUGIN_CONFIG_PATH = `${PLUGIN_DATA_PATH}/config.json`;
@@ -39,6 +39,7 @@ let playerConfig = {};
  * @property {number} [aux]
  * @property {string} [sNbt]
  * @property {string} [scoreName]
+ * @property {string} [command]
  * @property {string} [filename]
  */
 /**
@@ -153,7 +154,19 @@ function rollFortune() {
  * @param {FortuneAward[]} award
  */
 function giveAward(player, award) {
-  const getItem = ({ type, amount, aux, sNbt, scoreName, filename }) => {
+  /**
+   * @param {FortuneAward} param0
+   * @returns {Item | null}
+   */
+  const getItem = ({
+    type,
+    amount,
+    aux,
+    sNbt,
+    scoreName,
+    command,
+    filename,
+  }) => {
     if (type === 'dumped') {
       award = JSON.parse(File.readFrom(`${DUMPED_ITEMS_FOLDER}/${filename}`));
       return getItem(award);
@@ -163,17 +176,24 @@ function giveAward(player, award) {
       player.addMoney(amount);
       return null;
     }
+
     if (type === 'score') {
       const scoreObj = mc.getScoreObjective(scoreName);
       if (!scoreObj) {
         // scoreObj = mc.newScoreObjective(scoreName, scoreName);
-        mc.runcmd(`scoreboard objectives add "${scoreName}" dummy`);
+        mc.runcmdEx(`scoreboard objectives add "${scoreName}" dummy`);
       }
 
       // scoreObj.addScore(player, amount); // 有bug
-      mc.runcmd(
+      mc.runcmdEx(
         `scoreboard players add "${player.realName}" "${scoreName}" ${amount}`
       );
+      return null;
+    }
+
+    if (type === 'command') {
+      command = command.replace(/\{realName\}/g, player.realName);
+      mc.runcmdEx(command);
       return null;
     }
 

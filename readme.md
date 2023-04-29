@@ -127,6 +127,13 @@ _此处截图仅做示例，实际上插件不会在同一天对同一位玩家�
         "amount": 514
       },
       {
+        // 当 type 为 command 时，会执行命令
+        "type": "command",
+
+        // 执行的命令，可以使用 {realName} 变量代替玩家名称
+        "command": "execute at \"{realName}\" summon creeper"
+      },
+      {
         // 当 type 为 dumped 时
         // 会读取 plugins/DailyFortune/dumped 下的文件作为奖励项处理
         // 通常用于给予玩家 `fortune dump` 指令保存的带 NBT 的物品
@@ -172,4 +179,6 @@ QQ：3076823485
 
 ## 更新日志
 
-暂无
+### 0.1.1
+
+- 奖励支持执行指令
