@@ -1,24 +1,24 @@
 {
-  "format_version": 1,
-  "tooth": "github.com/lgc-LLSEDev/DailyFortune",
-  "version": "0.1.1",
-  "dependencies": {},
-  "information": {
+  "$schema": "https://raw.githubusercontent.com/lippkg/lip/main/schemas/tooth.v2.schema.json",
+  "format_version": 2,
+  "tooth": "github.com/lgc-LLDev/DailyFortune",
+  "version": "0.1.2",
+  "info": {
     "name": "DailyFortune",
-    "description": "一个简单的今日运势插件",
-    "author": "lgc2333",
-    "license": "Apache-2.0",
-    "homepage": "https://github.com/lgc-LLSEDev/DailyFortune"
+    "description": "How fortune are you today?",
+    "author": "student_2333",
+    "tags": ["plugin", "lse", "quickjs"]
   },
-  "placement": [
-    {
-      "source": "DailyFortune.js",
-      "destination": "plugins/DailyFortune.js"
-    },
-    {
-      "source": "fortune.json",
-      "destination": "plugins/DailyFortune/fortune.json"
-    }
-  ],
-  "possession": ["plugins/DailyFortune/"]
+  "files": {
+    "place": [
+      {
+        "src": "DailyFortune.js",
+        "dest": "plugins/DailyFortune/DailyFortune.js"
+      },
+      {
+        "src": "manifest.json",
+        "dest": "plugins/DailyFortune/manifest.json"
+      }
+    ]
+  }
 }

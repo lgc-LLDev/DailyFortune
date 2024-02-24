@@ -1,11 +1,12 @@
 // LiteLoaderScript Dev Helper
 /// <reference path="../HelperLib/src/index.d.ts"/>
-/* global ll mc NBT File PermType ParamType */
+/* global ll mc logger NBT file PermType ParamType */
 
 // TypeScript 写上头了，所以塞了一堆类型注解
 
 const PLUGIN_NAME = 'DailyFortune';
-const PLUGIN_VERSION = [0, 1, 1];
+/** @type {[number, number, number]} */
+const PLUGIN_VERSION = [0, 1, 2];
 
 const PLUGIN_DATA_PATH = `plugins/${PLUGIN_NAME}`;
 const PLUGIN_CONFIG_PATH = `${PLUGIN_DATA_PATH}/config.json`;
@@ -19,7 +20,10 @@ const DUMPED_ITEMS_FOLDER = `${PLUGIN_DATA_PATH}/dumped`;
  * @property {boolean} enableAward
  */
 /** @type {PluginConfig} */
-let pluginConfig = {};
+let pluginConfig = {
+  broadcast: true,
+  enableAward: true,
+};
 /**
  * @typedef {Object} LastFortune
  * @property {number} id
@@ -58,7 +62,7 @@ let fortuneConfig = [];
  * @return {boolean}
  */
 function writeConfig(path, conf) {
-  return File.writeTo(path, JSON.stringify(conf, null, 2));
+  return file.writeTo(path, JSON.stringify(conf, null, 2));
 }
 
 /**
@@ -68,13 +72,15 @@ function writeConfig(path, conf) {
  */
 function initConfig(path, defaultConf = {}) {
   let conf = defaultConf;
-  if (File.exists(path)) {
-    conf = JSON.parse(File.readFrom(path));
-
-    if (defaultConf instanceof Object && !Array.isArray(defaultConf)) {
-      Object.entries(defaultConf).forEach(([k, v]) => {
-        if (!(k in conf)) conf[k] = v;
-      });
+  if (file.exists(path)) {
+    const content = file.readFrom(path);
+    if (content) {
+      conf = JSON.parse(content);
+      if (defaultConf instanceof Object && !Array.isArray(defaultConf)) {
+        Object.entries(defaultConf).forEach(([k, v]) => {
+          if (!(k in conf)) conf[k] = v;
+        });
+      }
     }
   }
 
@@ -83,10 +89,7 @@ function initConfig(path, defaultConf = {}) {
 }
 
 function loadConfig() {
-  pluginConfig = initConfig(PLUGIN_CONFIG_PATH, {
-    broadcast: true,
-    enableAward: true,
-  });
+  pluginConfig = initConfig(PLUGIN_CONFIG_PATH, pluginConfig);
   playerConfig = initConfig(PLAYER_CONFIG_PATH);
   fortuneConfig = initConfig(FORTUNE_CONFIG_PATH, []);
 }
@@ -97,7 +100,7 @@ function loadConfig() {
  * @returns {number}
  */
 function randomInt(minNum, maxNum) {
-  return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+  return Math.random() * (maxNum - minNum + 1) + minNum;
 }
 
 /**
@@ -168,16 +171,29 @@ function giveAward(player, award) {
     filename,
   }) => {
     if (type === 'dumped') {
-      award = JSON.parse(File.readFrom(`${DUMPED_ITEMS_FOLDER}/${filename}`));
-      return getItem(award);
+      const content = file.readFrom(`${DUMPED_ITEMS_FOLDER}/${filename}`);
+      if (!content) {
+        logger.error(`Read file ${filename} failed`);
+        return null;
+      }
+      return getItem(JSON.parse(content));
     }
 
     if (type === 'money') {
+      if (!amount) {
+        logger.error('Money type award should specify amount');
+        return null;
+      }
       player.addMoney(amount);
       return null;
     }
 
     if (type === 'score') {
+      if (!scoreName) {
+        logger.error('Score type award should specify scoreName');
+        return null;
+      }
+
       const scoreObj = mc.getScoreObjective(scoreName);
       if (!scoreObj) {
         // scoreObj = mc.newScoreObjective(scoreName, scoreName);
@@ -192,18 +208,40 @@ function giveAward(player, award) {
     }
 
     if (type === 'command') {
+      if (!command) {
+        logger.error('Command type award should specify command');
+        return null;
+      }
+
       command = command.replace(/\{realName\}/g, player.realName);
       mc.runcmdEx(command);
       return null;
     }
 
-    if (sNbt) return mc.newItem(NBT.parseSNBT(sNbt));
+    if (sNbt) {
+      const res = NBT.parseSNBT(sNbt);
+      if (!res) {
+        logger.error(`Parse SNBT failed: ${sNbt}`);
+        return null;
+      }
+      return mc.newItem(res);
+    }
 
+    if (!type || !amount) {
+      logger.error('Item type award should specify type and amount');
+      return null;
+    }
     const it = mc.newItem(type, amount);
+    if (!it) {
+      logger.error(`Create item ${type}x${amount} failed`);
+      return null;
+    }
     if (typeof aux === 'number') it.setAux(aux);
     return it;
   };
 
+  /** @type {Item[]} */
+  // @ts-expect-error - type cast
   const items = award.map(getItem).filter((v) => v);
 
   const container = player.getInventory();
@@ -229,11 +267,19 @@ function todayFortune(player) {
   let fortune;
   let contentIndex;
   let newFortune = true;
-  if (lastDate && compareDate(new Date(lastDate))) {
+  if (lastDate && lastFortune && compareDate(new Date(lastDate))) {
+    newFortune = false;
     fortune = getFortuneById(lastFortune.id);
     contentIndex = lastFortune.contentIndex;
-    newFortune = false;
-  } else {
+  }
+  if (!fortune || !contentIndex) {
+    if (!newFortune) {
+      logger.error(
+        `Invalid last fortune id ${lastFortune.id} for player ${player.realName}, reroll`
+      );
+      newFortune = true;
+    }
+
     [fortune, contentIndex] = rollFortune();
 
     playerConfig[xuid] = {
@@ -265,7 +311,7 @@ function dumpItem(player) {
 
   const filename = `${new Date().getTime()}.json`;
   const path = `${DUMPED_ITEMS_FOLDER}/${filename}`;
-  File.writeTo(path, itJson);
+  file.writeTo(path, itJson);
   player.tell(`§a已将手持物品的NBT导出至 §6${path}`);
 }
 
@@ -280,42 +326,44 @@ function checkOpAndTip(player) {
   return isOp;
 }
 
-const fortuneCmd = mc.newCommand('fortune', '今日运势', PermType.Any);
+mc.listen('onServerStarted', () => {
+  const fortuneCmd = mc.newCommand('fortune', '今日运势', PermType.Any);
 
-fortuneCmd.setEnum('enumDump', ['dump']);
-fortuneCmd.setEnum('enumReload', ['reload']);
+  fortuneCmd.setEnum('enumDump', ['dump']);
+  fortuneCmd.setEnum('enumReload', ['reload']);
 
-fortuneCmd.mandatory('enumDump', ParamType.Enum, 'enumDump', 1);
-fortuneCmd.mandatory('enumReload', ParamType.Enum, 'enumReload', 1);
+  fortuneCmd.mandatory('enumDump', ParamType.Enum, 'enumDump', 1);
+  fortuneCmd.mandatory('enumReload', ParamType.Enum, 'enumReload', 1);
 
-fortuneCmd.overload([]);
-fortuneCmd.overload(['enumDump']);
-fortuneCmd.overload(['enumReload']);
+  fortuneCmd.overload([]);
+  fortuneCmd.overload(['enumDump']);
+  fortuneCmd.overload(['enumReload']);
 
-fortuneCmd.setCallback((_, { player }, out, { enumDump, enumReload }) => {
-  if (enumReload) {
-    if (!player || checkOpAndTip(player)) {
-      loadConfig();
-      out.success('§a配置已重载');
-      return true;
+  fortuneCmd.setCallback((_, { player }, out, { enumDump, enumReload }) => {
+    if (enumReload) {
+      if (!player || checkOpAndTip(player)) {
+        loadConfig();
+        out.success('§a配置已重载');
+        return true;
+      }
+      return false;
     }
-    return false;
-  }
 
-  if (!player) {
-    out.error('仅玩家可以执行这个命令');
-    return false;
-  }
+    if (!player) {
+      out.error('仅玩家可以执行这个命令');
+      return false;
+    }
 
-  if (enumDump) {
-    if (checkOpAndTip(player)) dumpItem(player);
-  } else {
-    todayFortune(player);
-  }
+    if (enumDump) {
+      if (checkOpAndTip(player)) dumpItem(player);
+    } else {
+      todayFortune(player);
+    }
 
-  return true;
+    return true;
+  });
+  fortuneCmd.setup();
 });
-fortuneCmd.setup();
 
 loadConfig();
 ll.registerPlugin(PLUGIN_NAME, '今日运势', PLUGIN_VERSION, {

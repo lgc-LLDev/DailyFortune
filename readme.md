@@ -15,15 +15,17 @@
 
 _此处截图仅做示例，实际上插件不会在同一天对同一位玩家显示不同的运势结果，除非配置文件被修改_
 
-![img](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/DailyFortune/Screenshot_20230114-032446.png)  
-![img](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/DailyFortune/Screenshot_20230114-014423.png)  
-![img](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/DailyFortune/Screenshot_20230114-032538.png)  
-![img](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/DailyFortune/Screenshot_20230114-032605.png)  
-![img](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/DailyFortune/Screenshot_20230114-032627.png)
+![img](https://raw.githubusercontent.com/lgc-LLDev/readme/main/DailyFortune/Screenshot_20230114-032446.png)  
+![img](https://raw.githubusercontent.com/lgc-LLDev/readme/main/DailyFortune/Screenshot_20230114-014423.png)  
+![img](https://raw.githubusercontent.com/lgc-LLDev/readme/main/DailyFortune/Screenshot_20230114-032538.png)  
+![img](https://raw.githubusercontent.com/lgc-LLDev/readme/main/DailyFortune/Screenshot_20230114-032605.png)  
+![img](https://raw.githubusercontent.com/lgc-LLDev/readme/main/DailyFortune/Screenshot_20230114-032627.png)
 
 ## 安装
 
-将 `DailyFortune.js` 放入 `plugins` 目录即可
+```shell
+lip install github.com/lgc-LLDev/DailyFortune
+```
 
 如果你要装载插件预设的运势文案和奖励配置，请复制 [`fortune.json`](./fortune.json) 文件至插件数据目录 `plugins/DailyFortune` 下
 
