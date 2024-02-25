@@ -6,7 +6,7 @@
 
 const PLUGIN_NAME = 'DailyFortune';
 /** @type {[number, number, number]} */
-const PLUGIN_VERSION = [0, 1, 2];
+const PLUGIN_VERSION = [0, 1, 3];
 
 const PLUGIN_DATA_PATH = `plugins/${PLUGIN_NAME}`;
 const PLUGIN_CONFIG_PATH = `${PLUGIN_DATA_PATH}/config.json`;
@@ -100,7 +100,7 @@ function loadConfig() {
  * @returns {number}
  */
 function randomInt(minNum, maxNum) {
-  return Math.random() * (maxNum - minNum + 1) + minNum;
+  return Math.ceil(Math.random() * (maxNum - minNum + 1) + minNum);
 }
 
 /**
