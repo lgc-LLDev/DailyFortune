@@ -95,12 +95,13 @@ function loadConfig() {
 }
 
 /**
- * @param {number} minNum
- * @param {number} maxNum
+ * 生成指定区间随机整数
+ * @param {number} min
+ * @param {number} max
  * @returns {number}
  */
-function randomInt(minNum, maxNum) {
-  return Math.ceil(Math.random() * (maxNum - minNum + 1) + minNum);
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 /**
