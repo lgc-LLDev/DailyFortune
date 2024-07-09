@@ -50,7 +50,7 @@ lip install github.com/lgc-LLDev/DailyFortune
   "broadcast": true,
 
   // 是否启用运势奖励
-  "enableAward": true
+  "enableAward": true,
 }
 ```
 
@@ -69,9 +69,9 @@ lip install github.com/lgc-LLDev/DailyFortune
       "id": -6,
 
       // 上次抽取的文案下 content 列表的数组下标
-      "contentIndex": 24
-    }
-  }
+      "contentIndex": 24,
+    },
+  },
   // ...
 }
 ```
@@ -91,7 +91,7 @@ lip install github.com/lgc-LLDev/DailyFortune
     // 该运势搭配的文本，抽取运势的时候会从中随机选择一个展示
     "content": [
       "寄全身于好奇心，世界将更加宽阔",
-      "曾经的努力和经验会成为他人眼中魅力的样子"
+      "曾经的努力和经验会成为他人眼中魅力的样子",
       // ...
     ],
 
@@ -105,18 +105,18 @@ lip install github.com/lgc-LLDev/DailyFortune
         "amount": 16,
 
         // 物品特殊值，可以不填
-        "aux": 0
+        "aux": 0,
       },
       {
         // 当有 sNbt 项时，将会给予玩家此 SNBT 字符串对应的物品，并忽略其他项
-        "sNbt": "{\"Count\":1b,\"Damage\":0s,\"Name\":\"minecraft:diamond\",\"WasPickedUp\":0b}"
+        "sNbt": "{\"Count\":1b,\"Damage\":0s,\"Name\":\"minecraft:diamond\",\"WasPickedUp\":0b}",
       },
       {
         // 当 type 为 money 时，会给予玩家 LLMoney 货币
         "type": "money",
 
         // 要给予玩家的货币数量
-        "amount": 114
+        "amount": 114,
       },
       {
         // 当 type 为 score 时，会给予玩家计分板经济
@@ -126,14 +126,14 @@ lip install github.com/lgc-LLDev/DailyFortune
         "scoreName": "money",
 
         // 要给予玩家的货币数量
-        "amount": 514
+        "amount": 514,
       },
       {
         // 当 type 为 command 时，会执行命令
         "type": "command",
 
         // 执行的命令，可以使用 {realName} 变量代替玩家名称
-        "command": "execute at \"{realName}\" summon creeper"
+        "command": "execute at \"{realName}\" summon creeper",
       },
       {
         // 当 type 为 dumped 时
@@ -142,11 +142,11 @@ lip install github.com/lgc-LLDev/DailyFortune
         "type": "dumped",
 
         // 要读取的 dumped 文件夹下的文件名
-        "filename": "1673637142566.json"
-      }
+        "filename": "1673637142566.json",
+      },
       // ...
-    ]
-  }
+    ],
+  },
   // ...
 ]
 ```
