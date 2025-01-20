@@ -1,5 +1,7 @@
 <!-- markdownlint-disable MD033 MD036 -->
 
+**本人已无心继续参与 BDS 插件开发，本插件暂停维护，请寻找更好的替代品，若希望继续维护请联系我**
+
 # DailyFortune
 
 今日运势
